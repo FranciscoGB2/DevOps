@@ -1,4 +1,4 @@
-from flask import Flask,request, render_template,request,redirect,url_for
+from flask import Flask , render_template , request
 from markupsafe import escape
 from flask_sqlalchemy import SQLAlchemy
 from flask import jsonify
@@ -21,7 +21,7 @@ with app.app_context():
 @app.route("/")
 def index():
     empleados = empleado.query.all()
-    return render_template('index.html', empleados=empleados)
+    return render_template('index.html' , empleados=empleados)
 #Crear Empleados
 @app.route("/crear_empleado", methods=["POST"])
 def agregar_item():
