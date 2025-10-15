@@ -31,5 +31,3 @@ jobs:
           context: .
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/my-python-app:latest
-        
-       
