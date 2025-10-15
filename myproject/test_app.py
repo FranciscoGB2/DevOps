@@ -1,5 +1,6 @@
-import pytest 
-from app import app, db, empleado
+import pytest
+from app import app, db
+
 
 @pytest.fixture
 def client():
@@ -11,20 +12,23 @@ def client():
         yield client
         with app.app_context():
             db.drop_all()
+
+
 def test_health(client):
     response = client.get("/health")
     assert response.status_code == 200
-def test_create_empleado(client):
-    response = client.post('/crear_empleado', json=
-    {
-        "name": "Felipe Isturiz",
-        "position": "Arquero"
 
-    })
+
+def test_create_empleado(client):
+    response = client.post('/crear_empleado', json={
+        "name": "Felipe Isturiz",
+        "position": "Arquero"})
     assert response.status_code == 201
     assert b'Felipe Isturiz' in response.data
+
+
 def test_get_empleados(client):
-    client.post('/crear_empleado', json= {
+    client.post('/crear_empleado', json={
         "name": "Inaki Stropianna",
         "position": "Estudiante"
     })
