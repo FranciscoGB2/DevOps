@@ -54,7 +54,7 @@ def obtener_empleado(empleado_id):
     if not empleado:
         return jsonify({"error": "Employer not found"}), 404
     return jsonify(empleado.to_dict()), 200
-# Actualizar por ID
+# Actualizar por ID2
 
 
 @app.route("/empleados/<int:empleado_id>", methods=["PUT"])
