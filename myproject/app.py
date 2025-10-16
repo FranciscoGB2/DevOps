@@ -1,6 +1,8 @@
 from flask import Flask, render_template, request, jsonify
 from markupsafe import escape
 from flask_sqlalchemy import SQLAlchemy
+import newrelic.agent
+newrelic.agent.initialize('newrelic.ini')
 
 
 app = Flask(__name__)
@@ -54,7 +56,7 @@ def obtener_empleado(empleado_id):
     if not empleado:
         return jsonify({"error": "Employer not found"}), 404
     return jsonify(empleado.to_dict()), 200
-# Actualizar por ID a
+# Actualizar por ID
 
 
 @app.route("/empleados/<int:empleado_id>", methods=["PUT"])
