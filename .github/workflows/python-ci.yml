@@ -43,3 +43,9 @@ jobs:
           file: ./myproject/Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/my-python-app:latest
+
+      - name: Deploy de render
+        run: |
+         curl -X POST \
+         -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
+         https://api.render.com/deploy/srv-d3olgcripnbc739al0r0?key=J16KcaBtKEc
