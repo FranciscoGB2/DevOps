@@ -43,6 +43,8 @@ jobs:
           file: ./myproject/Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/my-python-app:latest
+          build-args: |
+            NEW_RELIC_LICENSE_KEY=${{ secrets.NEW_RELIC_LICENSE_KEY }}
 
       - name: Deploy de render
         run: |
