@@ -1,6 +1,8 @@
 from flask import Flask, render_template, request, jsonify
 from markupsafe import escape
 from flask_sqlalchemy import SQLAlchemy
+import newrelic.agent
+newrelic.agent.initialize('newrelic.ini')
 
 
 app = Flask(__name__)
