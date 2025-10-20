@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, jsonify
 from markupsafe import escape
 from flask_sqlalchemy import SQLAlchemy
 import newrelic.agent
-newrelic.agent.initialize('newrelic.ini')
+newrelic.agent.initialize('C:/Users/Usuario/Desktop/DevOps/myproject/newrelic.ini')
 
 
 app = Flask(__name__)
