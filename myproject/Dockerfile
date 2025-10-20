@@ -15,7 +15,7 @@ WORKDIR /app
 #Copio solamente lo necesario desde la etapa anterior
 COPY --from=builder /app /app
 RUN pip install --no-cache-dir -r requirements.txt
-EXPOSE 5000
+EXPOSE 1000
 #Comando para ejecutar la aplicacion
 # Las variables de entorno NEW_RELIC_LICENSE_KEY y NEW_RELIC_APP_NAME
 CMD ["newrelic-admin","run-program","python", "app.py"]
