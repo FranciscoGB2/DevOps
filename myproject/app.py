@@ -5,10 +5,14 @@ import newrelic.agent
 import os
 
 
-newrelic_config_path = 'C:/Users/Usuario/Desktop/DevOps/myproject/newrelic.ini'
+newrelic_config_path = os.path.join(os.path.dirname(__file__), "newrelic.ini")
 
-if os.path.exists(newrelic_config_path) and not os.getenv("CI") and not os.getenv("FLASK_TESTING"):
+if os.path.exists(newrelic_config_path):
     newrelic.agent.initialize(newrelic_config_path)
+    print("✅ New Relic inicializado")
+else:
+    print("⚙️ New Relic no se inicializa (archivo no encontrado)")
+
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
