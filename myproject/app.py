@@ -7,8 +7,8 @@ import os
 
 newrelic_config_path = 'C:/Users/Usuario/Desktop/DevOps/myproject/newrelic.ini'
 
-
-newrelic.agent.initialize(newrelic_config_path)
+if os.path.exists(newrelic_config_path) and not os.getenv("CI") and not os.getenv("FLASK_TESTING"):
+    newrelic.agent.initialize(newrelic_config_path)
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
@@ -104,4 +104,3 @@ def health():
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=1000)
 
-#dadasadas
