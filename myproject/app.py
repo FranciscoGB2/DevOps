@@ -2,8 +2,12 @@ from flask import Flask, render_template, request, jsonify
 from markupsafe import escape
 from flask_sqlalchemy import SQLAlchemy
 import newrelic.agent
-newrelic.agent.initialize('C:/Users/Usuario/Desktop/DevOps/myproject/newrelic.ini')
+import os;
 
+
+if not os.getenv("FLASK_TESTING"):
+    import newrelic.agent
+    newrelic.agent.initialize('C:/Users/Usuario/Desktop/DevOps/myproject/newrelic.ini')
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
