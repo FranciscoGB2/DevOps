@@ -5,10 +5,12 @@ import newrelic.agent
 import os;
 
 
-if not os.getenv("FLASK_TESTING"):
-    import newrelic.agent
-    newrelic.agent.initialize('C:/Users/Usuario/Desktop/DevOps/myproject/newrelic.ini')
+newrelic_config_path = 'C:/Users/Usuario/Desktop/DevOps/myproject/newrelic.ini'
 
+if os.path.exists(newrelic_config_path) and not os.getenv("CI") and not os.getenv("FLASK_TESTING"):
+    import newrelic.agent
+    newrelic.agent.initialize(newrelic_config_path)
+    
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
