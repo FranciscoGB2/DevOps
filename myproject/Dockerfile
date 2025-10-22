@@ -28,4 +28,4 @@ COPY newrelic-infra.yml /etc/newrelic-infra.yml
 EXPOSE 1000
 #Comando para ejecutar la aplicacion
 # Las variables de entorno NEW_RELIC_LICENSE_KEY y NEW_RELIC_APP_NAME
-CMD service newrelic-infra start && newrelic-admin run-program python app.py
+CMD /usr/bin/newrelic-infra & newrelic-admin run-program python app.py
