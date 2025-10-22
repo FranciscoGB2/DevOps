@@ -15,7 +15,19 @@ WORKDIR /app
 #Copio solamente lo necesario desde la etapa anterior
 COPY --from=builder /app /app
 RUN pip install --no-cache-dir -r requirements.txt
+# 2️⃣ Instalar New Relic Infrastructure Agent
+# ---------------------------------
+RUN apt-get update && apt-get install -y curl gnupg && \
+    curl -s https://download.newrelic.com/infrastructure_agent/gpg/newrelic-infra.gpg | gpg --dearmor -o /usr/share/keyrings/newrelic-infra-archive-keyring.gpg && \
+    printf "deb [signed-by=/usr/share/keyrings/newrelic-infra-archive-keyring.gpg] https://download.newrelic.com/infrastructure_agent/linux/apt focal main\n" > /etc/apt/sources.list.d/newrelic-infra.list && \
+    apt-get update && apt-get install -y newrelic-infra && \
+    rm -rf /var/lib/apt/lists/*
+
+# ---------------------------------
+# 3️⃣ Copiar configuración del agente
+# ---------------------------------
+COPY newrelic-infra.yml /etc/newrelic-infra.yml
 EXPOSE 1000
 #Comando para ejecutar la aplicacion
 # Las variables de entorno NEW_RELIC_LICENSE_KEY y NEW_RELIC_APP_NAME
-CMD ["newrelic-admin","run-program","python", "app.py"]
+CMD service newrelic-infra start && newrelic-admin run-program python app.py

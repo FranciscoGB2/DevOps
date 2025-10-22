@@ -1,0 +1,7 @@
+license_key: b6fd70ae51019b708fd4b3a540799ddeFFFFNRAL
+display_name: render-python-app
+enable_process_metrics: true
+custom_attributes:
+  env: production
+  region: render
+  app: flask-demo

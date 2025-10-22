@@ -3,7 +3,7 @@ from markupsafe import escape
 from flask_sqlalchemy import SQLAlchemy
 import newrelic.agent
 import os
-
+import math
 
 newrelic_config_path = os.path.join(os.path.dirname(__file__), "newrelic.ini")
 
@@ -99,6 +99,19 @@ def hello():
     name = request.args.get("name", "Desarrollador")
     return f"Como va, {escape(name)}!"
 
+
+@app.route("/stress_cpu")
+def stress_cpu():
+    total = 0
+    for i in range(10**7):
+       math.sqrt(99999)
+    return f"CPU stress completed! Total",200 
+
+
+@app.route("/stress_memory")
+def stress_memory():
+    data = ['x'*1024*1024 for _ in range(300)] # Aprox 300MB
+    return f"Memory stress completed! ",200
 
 @app.route('/health', methods=['GET'])
 def health():
