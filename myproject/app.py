@@ -102,16 +102,15 @@ def hello():
 
 @app.route("/stress_cpu")
 def stress_cpu():
-    total = 0
     for i in range(10**7):
-       math.sqrt(99999)
-    return f"CPU stress completed! Total",200 
+     math.sqrt(99999)
+    return "CPU stress completed! Total", 200
 
 
 @app.route("/stress_memory")
 def stress_memory():
-    data = ['x'*1024*1024 for _ in range(300)] # Aprox 300MB
-    return f"Memory stress completed! ",200
+    data = ['x' * 1024 * 1024 for _ in range(300)]  # Aprox 300MB
+    return "Memory stress completed!", data, 200
 
 @app.route('/health', methods=['GET'])
 def health():
