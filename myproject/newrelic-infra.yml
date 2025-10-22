@@ -1,0 +1,7 @@
+license_key: b6fd70ae51019b708fd4b3a540799ddeFFFFNRAL
+log_file: /var/log/newrelic-infra.log
+log_level: info
+enable_process_metrics: true
+custom_attributes:
+  environment: render
+  service: flask_app

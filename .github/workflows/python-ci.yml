@@ -1,10 +1,10 @@
-name: Python CI
+name: Python CI/CD
 
 on:
   push:
-    branches: [ main]
+    branches: [ main ]
   pull_request:
-    branches: [ main]
+    branches: [ main ]
 
 jobs:
   build:
@@ -13,39 +13,49 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Set up Python
+      - name:  Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
 
-      - name: Install dependencies
+      - name:  Install dependencies
         run: pip install -r requirements.txt
         working-directory: ./myproject
 
-      - name: Run tests
+      - name:  Run tests
         run: pytest test_app.py
         working-directory: ./myproject
 
-      - name: Run linter (flake8)
+      - name:  Run linter
         run: pip install flake8 && flake8 .
         working-directory: ./myproject
 
-      - name: Log in to Docker Hub
+      - name:  Test Docker Compose
+        run: |
+          docker compose -f ./myproject/docker-compose.yml up -d
+          sleep 10
+          docker ps
+          docker logs flask_app
+          docker compose -f ./myproject/docker-compose.yml down
+
+      - name:  Log in to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-      - name: Build and push Docker image
+      - name:  Build and push Docker image
         uses: docker/build-push-action@v3
         with:
           context: ./myproject
           file: ./myproject/Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/my-python-app:latest
+          build-args: |
+            NEW_RELIC_LICENSE_KEY=${{ secrets.NEW_RELIC_LICENSE_KEY }}
 
-      - name: Deploy de render
+      - name:  Deploy a Render
         run: |
-         curl -X POST \
-         -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
-         https://api.render.com/deploy/srv-d3olgcripnbc739al0r0?key=J16KcaBtKEc
+          curl -X POST \
+            -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
+            https://api.render.com/deploy/srv-d3olgcripnbc739al0r0
