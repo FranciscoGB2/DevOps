@@ -43,9 +43,10 @@ jobs:
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
       - name: Build Docker image with Compose
-        run: docker compose --project-directory ./myproject -f ./myproject/docker-compose.yml build
+        working-directory: ./myproject
+        run: docker compose -f docker-compose.yml build
         env:
-            NEW_RELIC_LICENSE_KEY: ${{ secrets.NEW_RELIC_LICENSE_KEY }}
+          NEW_RELIC_LICENSE_KEY: ${{ secrets.NEW_RELIC_LICENSE_KEY }}
 
 
 

@@ -1,7 +1,7 @@
 services:
   web:
     build:
-      context: ./myproject   # Ajustá esta ruta si tu Dockerfile está dentro de una carpeta
+      context: .   # Ajustá esta ruta si tu Dockerfile está dentro de una carpeta
       dockerfile: Dockerfile
     ports:
       - "1000:1000"
