@@ -17,11 +17,9 @@ COPY --from=builder /app /app
 RUN pip install --no-cache-dir -r requirements.txt
 # 2️⃣ Instalar New Relic Infrastructure Agent
 # ---------------------------------
-RUN apt-get update && apt-get install -y curl gnupg && \
-    curl -s https://download.newrelic.com/infrastructure_agent/gpg/newrelic-infra.gpg | gpg --dearmor -o /usr/share/keyrings/newrelic-infra-archive-keyring.gpg && \
-    printf "deb [signed-by=/usr/share/keyrings/newrelic-infra-archive-keyring.gpg] https://download.newrelic.com/infrastructure_agent/linux/apt bookworm main\n" > /etc/apt/sources.list.d/newrelic-infra.list && \
-    apt-get update && apt-get install -y newrelic-infra && \
-    rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y curl ca-certificates && \
+    curl -Ls https://download.newrelic.com/install/newrelic-cli/scripts/install.sh | bash && \
+    NEW_RELIC_API_KEY=${NEW_RELIC_LICENSE_KEY:-dummy} NEW_RELIC_ACCOUNT_ID=0 /usr/local/bin/newrelic install -y -n infrastructure-agent || true
 
 # ---------------------------------
 # 3️⃣ Copiar configuración del agente
