@@ -19,7 +19,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # ---------------------------------
 RUN apt-get update && apt-get install -y curl ca-certificates && \
     curl -Ls https://download.newrelic.com/install/newrelic-cli/scripts/install.sh | bash && \
-    NEW_RELIC_API_KEY=${NEW_RELIC_LICENSE_KEY:-dummy} NEW_RELIC_ACCOUNT_ID=0 /usr/local/bin/newrelic install -y -n infrastructure-agent || true
+    NEW_RELIC_API_KEY=${68c91c97c20b7ee49bf42b25c217eda8FFFFNRAL:-dummy} NEW_RELIC_ACCOUNT_ID=0 /usr/local/bin/newrelic install -y -n infrastructure-agent || true
 
 # ---------------------------------
 # 3️⃣ Copiar configuración del agente
