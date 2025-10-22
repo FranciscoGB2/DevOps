@@ -19,7 +19,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # ---------------------------------
 RUN apt-get update && apt-get install -y curl gnupg && \
     curl -s https://download.newrelic.com/infrastructure_agent/gpg/newrelic-infra.gpg | gpg --dearmor -o /usr/share/keyrings/newrelic-infra-archive-keyring.gpg && \
-    printf "deb [signed-by=/usr/share/keyrings/newrelic-infra-archive-keyring.gpg] https://download.newrelic.com/infrastructure_agent/linux/apt focal main\n" > /etc/apt/sources.list.d/newrelic-infra.list && \
+    printf "deb [signed-by=/usr/share/keyrings/newrelic-infra-archive-keyring.gpg] https://download.newrelic.com/infrastructure_agent/linux/apt bookworm main\n" > /etc/apt/sources.list.d/newrelic-infra.list && \
     apt-get update && apt-get install -y newrelic-infra && \
     rm -rf /var/lib/apt/lists/*
 
