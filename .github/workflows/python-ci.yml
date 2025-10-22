@@ -1,51 +1,64 @@
-name: Python CI
+name: Python CI/CD
 
 on:
   push:
-    branches: [ main]
+    branches: [ main ]
   pull_request:
-    branches: [ main]
+    branches: [ main ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      #  Clonar el repositorio
+      - uses: actions/checkout@v4
 
+      #  Configurar Python
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
+      # Instalar dependencias
       - name: Install dependencies
         run: pip install -r requirements.txt
         working-directory: ./myproject
 
+      # Ejecutar tests
       - name: Run tests
         run: pytest test_app.py
         working-directory: ./myproject
 
+      # Ejecutar flake8
       - name: Run linter (flake8)
         run: pip install flake8 && flake8 .
         working-directory: ./myproject
 
+      # Loguearse en Docker Hub
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v3
-        with:
-          context: ./myproject
-          file: ./myproject/Dockerfile
-          push: true
-          tags: ${{ secrets.DOCKER_HUB_USERNAME }}/my-python-app:latest
+      - name: Build Docker image with Compose
+        working-directory: ./myproject
+        run: docker compose -f docker-compose.yml build
+        env:
+          NEW_RELIC_LICENSE_KEY: ${{ secrets.NEW_RELIC_LICENSE_KEY }}
 
-      - name: Deploy de render
+
+
+      # Subir la imagen a Docker Hub
+      - name: Push Docker image
         run: |
-         curl -X POST \
-         -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
-         https://api.render.com/deploy/srv-d3olgcripnbc739al0r0?key=J16KcaBtKEc
+          docker tag myproject-web ${{ secrets.DOCKER_HUB_USERNAME }}/my-python-app:latest
+          docker push ${{ secrets.DOCKER_HUB_USERNAME }}/my-python-app:latest
+
+      # Desplegar automáticamente a Render
+      - name: Deploy to Render
+        run: |
+          curl -X POST \
+            -H "Authorization: Bearer ${{ secrets.RENDER_API_KEY }}" \
+            https://api.render.com/deploy/srv-d3olgcripnbc739al0r0?key=J16KcaBtKEc

@@ -1,6 +1,17 @@
 from flask import Flask, render_template, request, jsonify
 from markupsafe import escape
 from flask_sqlalchemy import SQLAlchemy
+import newrelic.agent
+import os
+
+
+newrelic_config_path = os.path.join(os.path.dirname(__file__), "newrelic.ini")
+
+if os.path.exists(newrelic_config_path):
+    newrelic.agent.initialize(newrelic_config_path)
+    print("✅ New Relic inicializado")
+else:
+    print("⚙️ New Relic no se inicializa (archivo no encontrado)")
 
 
 app = Flask(__name__)
@@ -54,7 +65,7 @@ def obtener_empleado(empleado_id):
     if not empleado:
         return jsonify({"error": "Employer not found"}), 404
     return jsonify(empleado.to_dict()), 200
-# Actualizar por ID a
+# Actualizar por ID
 
 
 @app.route("/empleados/<int:empleado_id>", methods=["PUT"])
@@ -95,4 +106,5 @@ def health():
 
 # DADASDSAD
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=1000)
+    port = int(os.environ.get("PORT", 1000))
+    app.run(host="0.0.0.0", port=port)
