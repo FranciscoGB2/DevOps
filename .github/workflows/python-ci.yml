@@ -42,10 +42,12 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-      # Construir la imagen con Docker Compose
       - name: Build Docker image with Compose
         run: docker compose -f ./myproject/docker-compose.yml build
+        env:
+          NEW_RELIC_LICENSE_KEY: ${{ secrets.NEW_RELIC_LICENSE_KEY }}
 
+          
       # Subir la imagen a Docker Hub
       - name: Push Docker image
         run: |
