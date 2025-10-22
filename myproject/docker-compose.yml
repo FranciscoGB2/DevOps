@@ -1,0 +1,12 @@
+services:
+  web:
+    build:
+      context: ./myproject   # Ajustá esta ruta si tu Dockerfile está dentro de una carpeta
+      dockerfile: Dockerfile
+    ports:
+      - "1000:1000"
+    environment:
+      - NEW_RELIC_LICENSE_KEY=${NEW_RELIC_LICENSE_KEY}
+      - NEW_RELIC_APP_NAME=MiAppConNewRelic
+      - FLASK_ENV=production
+    restart: always
