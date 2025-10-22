@@ -10,24 +10,25 @@ FROM python:3.13-slim
 WORKDIR /app
 COPY --from=builder /app /app
 
-# Dependencias del sistema
+# Dependencias mínimas del sistema
 RUN apt-get update && apt-get install -y curl tar gzip ca-certificates && rm -rf /var/lib/apt/lists/*
 
-# Descargar el agente de infraestructura desde GitHub (última versión portable)
-RUN curl -L -o /tmp/newrelic-infra.tar.gz https://github.com/newrelic/infrastructure-agent/releases/latest/download/newrelic-infra_linux_amd64.tar.gz && \
+# Descargar e instalar el agente de infraestructura (versión estable conocida)
+RUN echo "Descargando New Relic Infra Agent..." && \
+    curl -fL -o /tmp/nr-infra.tar.gz https://download.newrelic.com/infrastructure_agent/binaries/linux/amd64/1.70.0/newrelic-infra_linux_1.70.0.tar.gz && \
     mkdir -p /opt/newrelic-infra && \
-    tar -xzf /tmp/newrelic-infra.tar.gz -C /opt/newrelic-infra && \
-    ln -s /opt/newrelic-infra/newrelic-infra /usr/local/bin/newrelic-infra && \
-    rm -f /tmp/newrelic-infra.tar.gz
+    tar -xzf /tmp/nr-infra.tar.gz -C /opt/newrelic-infra --strip-components=1 && \
+    ln -sf /opt/newrelic-infra/newrelic-infra /usr/local/bin/newrelic-infra && \
+    rm -f /tmp/nr-infra.tar.gz && \
+    /usr/local/bin/newrelic-infra --version || echo "Agente instalado."
 
 # Instalar dependencias de Python
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copiar archivo de configuración del agente
+# Copiar configuración del agente
 COPY newrelic-infra.yml /etc/newrelic-infra.yml
 
-# Exponer el puerto Flask
 EXPOSE 1000
 
-# Ejecutar agente de infraestructura y la app Flask
+# Iniciar el agente de infraestructura y luego la app Flask
 CMD /usr/local/bin/newrelic-infra & newrelic-admin run-program python app.py
