@@ -35,3 +35,42 @@ def test_get_empleados(client):
     response = client.get('/empleados')
     assert response.status_code == 200
     assert b'Inaki Stropianna' in response.data
+
+
+def test_update_empleado(client):
+    # Crear empleado inicial
+    create_resp = client.post('/crear_empleado', json={
+        "name": "Lucas Rivas",
+        "position": "Programador"
+    })
+    assert create_resp.status_code == 201
+    emp_id = create_resp.get_json()["id"]
+
+    # Actualizar el empleado
+    update_resp = client.put(f'/empleados/{emp_id}', json={
+        "name": "Lucas R.",
+        "position": "Senior Dev"
+    })
+    assert update_resp.status_code == 200
+    data = update_resp.get_json()
+    assert data["name"] == "Lucas R."
+    assert data["position"] == "Senior Dev"
+
+
+def test_delete_empleado(client):
+    # Crear empleado para borrar
+    create_resp = client.post('/crear_empleado', json={
+        "name": "Sofía Méndez",
+        "position": "Diseñadora"
+    })
+    assert create_resp.status_code == 201
+    emp_id = create_resp.get_json()["id"]
+
+    # Borrar el empleado
+    delete_resp = client.delete(f'/empleados/{emp_id}')
+    assert delete_resp.status_code == 200
+    assert b'Item deleted' in delete_resp.data
+
+    # Verificar que ya no existe
+    get_resp = client.get(f'/empleados/{emp_id}')
+    assert get_resp.status_code == 404
