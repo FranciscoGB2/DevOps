@@ -69,14 +69,14 @@ def obtener_empleado(empleado_id):
 
 
 @app.route("/empleados/<int:empleado_id>", methods=["PUT"])
-def update_empleado(empleado_id):
-    empleado = None
+def update_empleado(empleado_id):  
+
     empleado = empleado.query.get_or_404(empleado_id)
-    if not empleado:
-        return jsonify({"error": "Item not found"}), 404
     data = request.get_json()
+
     empleado.nombre = data.get("name", empleado.nombre)
     empleado.puesto = data.get("position", empleado.puesto)
+
     db.session.commit()
     return jsonify(empleado.to_dict()), 200
 # Eliminar por ID
@@ -84,12 +84,12 @@ def update_empleado(empleado_id):
 
 @app.route("/empleados/<int:empleado_id>", methods=["DELETE"])
 def eliminar_empleado(empleado_id):
-    empleado = None
+
     empleado = empleado.query.get_or_404(empleado_id)
-    if not empleado:
-        return jsonify({"error": "Item not found"}), 404
+
     db.session.delete(empleado)
     db.session.commit()
+
     return jsonify({"message": "Item deleted"}), 200
 
 
