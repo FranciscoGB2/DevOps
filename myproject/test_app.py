@@ -38,6 +38,7 @@ def test_get_empleados(client):
 
 
 def test_update_empleado(client):
+    """Prueba la actualización de un empleado existente."""
     # Crear empleado inicial
     create_resp = client.post('/crear_empleado', json={
         "name": "Lucas Rivas",
@@ -56,8 +57,17 @@ def test_update_empleado(client):
     assert data["name"] == "Lucas R."
     assert data["position"] == "Senior Dev"
 
+    # Verificar que la actualización persistió
+    get_resp = client.get('/empleados')
+    empleados = get_resp.get_json()
+    emp = next((e for e in empleados if e["id"] == emp_id), None)
+    assert emp is not None
+    assert emp["name"] == "Lucas R."
+    assert emp["position"] == "Senior Dev"
+
 
 def test_delete_empleado(client):
+    """Prueba la eliminación de un empleado existente."""
     # Crear empleado para borrar
     create_resp = client.post('/crear_empleado', json={
         "name": "Sofía Méndez",
