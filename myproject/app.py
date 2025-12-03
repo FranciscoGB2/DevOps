@@ -3,6 +3,33 @@ from markupsafe import escape
 from flask_sqlalchemy import SQLAlchemy
 import newrelic.agent
 import os
+import threading
+import time
+import psutil
+
+
+INTERVALO_METRICAS = int(os.environ.get("INTERVALO_METRICAS", 15))  # segundos
+
+
+def recolectar_metricas():
+    def _run():
+        while True:
+            try:
+                cpu = psutil.cpu_percent(interval=1)
+                memoria = psutil.virtual_memory().percent
+                disk = psutil.disk_usage('/').percent
+                newrelic.agent.record_custom_metric("Custom/System/CPUPercent", cpu)
+                newrelic.agent.record_custom_metric("Custom/System/MemoryPercent", memoria)
+                newrelic.agent.record_custom_metric("Custom/System/DiskPercent", disk)
+
+            except Exception as e:
+                #Si algo falla, registramos el evento pero no rompemos la app
+                try:
+                    newrelic.agent.record_custom_event("Custom/System/MetricError", {"error": str(e)})
+                except Exception:
+                    pass
+            time.sleep(INTERVALO_METRICAS)
+    threading.Thread(target=_run, daemon=True).start()
 
 # --- Inicialización de New Relic ---
 newrelic_config_path = os.path.join(os.path.dirname(__file__), "newrelic.ini")
