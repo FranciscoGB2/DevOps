@@ -6,7 +6,7 @@ on:
   pull_request:
 
 env:
-  IMAGE_NAME: franciscogb2/devops
+  IMAGE_NAME: franciscogb7/my-python-app
   PYTHON_VERSION: "3.13"
 
 jobs:
