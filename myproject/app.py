@@ -22,6 +22,12 @@ def recolectar_metricas():
                 newrelic.agent.record_custom_metric("Custom/System/CPUPercent", cpu)
                 newrelic.agent.record_custom_metric("Custom/System/MemoryPercent", mem)
                 newrelic.agent.record_custom_metric("Custom/System/DiskPercent", disk)
+                
+                newrelic.agent.record_custom_event("SystemMetrics", {
+                    "cpuPercent": cpu,
+                    "memoryPercent": mem,
+                    "diskPercent": disk,
+                })
 
                 print(f"[METRICS] CPU={cpu} MEM={mem} DISK={disk}")
 
