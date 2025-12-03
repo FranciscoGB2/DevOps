@@ -6,7 +6,7 @@ on:
   pull_request:
 
 env:
-  IMAGE_NAME: tuusuario/turepo  # ej: franciscogb2/devops
+  IMAGE_NAME: franciscogb2/devops
   PYTHON_VERSION: "3.13"
 
 jobs:
@@ -44,7 +44,7 @@ jobs:
   docker:
     name: Login to Docker Hub & Build Image
     runs-on: ubuntu-latest
-    needs: build   # no corre si antes no pasó el job build
+    needs: build
 
     steps:
       - name: Checkout
@@ -59,12 +59,11 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
-          context: .
+          context: ./myproject         
           push: true
           tags: |
             ${{ env.IMAGE_NAME }}:latest
             ${{ env.IMAGE_NAME }}:${{ github.sha }}
-
   #######################################
   # 3) DEPLOY A RENDER
   #######################################
