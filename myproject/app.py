@@ -3,7 +3,7 @@ from markupsafe import escape
 from flask_sqlalchemy import SQLAlchemy
 import newrelic.agent
 import os
-import threading
+from threading import Thread
 import time
 import psutil
 
@@ -16,20 +16,21 @@ def recolectar_metricas():
         while True:
             try:
                 cpu = psutil.cpu_percent(interval=1)
-                memoria = psutil.virtual_memory().percent
-                disk = psutil.disk_usage('/').percent
+                mem = psutil.virtual_memory().percent
+                disk = psutil.disk_usage("/").percent
+
                 newrelic.agent.record_custom_metric("Custom/System/CPUPercent", cpu)
-                newrelic.agent.record_custom_metric("Custom/System/MemoryPercent", memoria)
+                newrelic.agent.record_custom_metric("Custom/System/MemoryPercent", mem)
                 newrelic.agent.record_custom_metric("Custom/System/DiskPercent", disk)
 
+                print(f"[METRICS] CPU={cpu} MEM={mem} DISK={disk}")
+
             except Exception as e:
-                #Si algo falla, registramos el evento pero no rompemos la app
-                try:
-                    newrelic.agent.record_custom_event("Custom/System/MetricError", {"error": str(e)})
-                except Exception:
-                    pass
+                print("ERROR metrics:", e)
+
             time.sleep(INTERVALO_METRICAS)
-    threading.Thread(target=_run, daemon=True).start()
+
+    Thread(target=_run, daemon=True).start()
 
 # --- Inicialización de New Relic ---
 newrelic_config_path = os.path.join(os.path.dirname(__file__), "newrelic.ini")
@@ -127,5 +128,6 @@ def health():
 
 # --- Entrada principal ---
 if __name__ == "__main__":
+    recolectar_metricas()
     port = int(os.environ.get("PORT", 1000))
     app.run(host="0.0.0.0", port=port)
