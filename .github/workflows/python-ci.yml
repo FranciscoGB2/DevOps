@@ -10,9 +10,9 @@ env:
   PYTHON_VERSION: "3.13"
 
 jobs:
-  #######################################
-  # 1) BUILD & TEST
-  #######################################
+  
+  #  BUILD & TEST
+
   build:
     name: Build & Test
     runs-on: ubuntu-latest
@@ -38,9 +38,9 @@ jobs:
         run: |
           pytest test_app.py
 
-  #######################################
-  # 2) BUILD & PUSH DOCKER
-  #######################################
+
+  # BUILD & PUSH DOCKER
+  
   docker:
     name: Login to Docker Hub & Build Image
     runs-on: ubuntu-latest
@@ -64,9 +64,9 @@ jobs:
           tags: |
             ${{ env.IMAGE_NAME }}:latest
             ${{ env.IMAGE_NAME }}:${{ github.sha }}
-  #######################################
-  # 3) DEPLOY A RENDER
-  #######################################
+  
+  #  DEPLOY A RENDER
+ 
   deploy:
     name: Deploy to Render
     runs-on: ubuntu-latest
