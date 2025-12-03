@@ -1,8 +1,8 @@
 # syntax=docker/dockerfile:1
 
-
+##############################
 # Etapa 1: Builder + Tests
-
+##############################
 FROM python:3.13-slim AS builder
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
@@ -10,21 +10,22 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 
-#  Copio solo los requerimientos para aprovechar la caché
+# 1) Copiamos SOLO requirements para aprovechar la caché
 COPY requirements.txt .
 
-# Instalo dependencias (prod + dev) en /usr/local (default)
+# 2) Instalamos dependencias
 RUN pip install --no-cache-dir -r requirements.txt
 
-# 3) copio el resto del codigo
+# 3) Copiamos TODO el código
 COPY . .
 
-# 4) Ejecuto los tests
+# 4) Ejecutamos los tests
 RUN pytest test_app.py
 
 
-
+##############################
 # Etapa 2: Imagen final
+##############################
 FROM python:3.13-slim AS final
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
@@ -32,14 +33,12 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 
-# Copio solo las dependencias ya instaladas del builder
+# 1) Copiamos las dependencias ya instaladas
 COPY --from=builder /usr/local /usr/local
 
-#  Copio solo lo necesario para ejecutar la app
-COPY app.py newrelic.ini  
+# 2) Copiamos TODO el proyecto (incluye app.py sí o sí)
+COPY --from=builder /app /app
 
 EXPOSE 1000
 
-# Las variables NEW_RELIC_LICENSE_KEY y NEW_RELIC_APP_NAME
-# deben venir por entorno
 CMD ["newrelic-admin", "run-program", "python", "app.py"]
