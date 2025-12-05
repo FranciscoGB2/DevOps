@@ -62,8 +62,8 @@ jobs:
           context: ./myproject         
           push: true
           tags: |
-            franrepo/miapp:v1.0
-            franrepo/miapp:latest
+            ${{ env.IMAGE_NAME }}:v1.0
+            ${{ env.IMAGE_NAME }}:latest
   
   #  DEPLOY A RENDER
  
