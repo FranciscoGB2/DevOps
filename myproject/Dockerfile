@@ -10,17 +10,19 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 
-# 1) Copiamos SOLO requirements para aprovechar la caché
+
+# 1) Copiamos SOLO requirements
 COPY requirements.txt .
 
-# 2) Instalamos dependencias
-RUN pip install --no-cache-dir -r requirements.txt
+# 2) Creamos un venv y ahí instalamos dependencias
+RUN python -m venv /opt/venv \
+    && . /opt/venv/bin/activate \
+    && pip install --upgrade pip \
+    && pip install --no-cache-dir -r requirements.txt
 
-# 3) Copiamos TODO el código
+# 3) Copiamos el código y corremos tests dentro del venv
 COPY . .
-
-# 4) Ejecutamos los tests
-RUN pytest test_app.py
+RUN . /opt/venv/bin/activate && pytest test_app.py
 
 
 ##############################
@@ -33,11 +35,14 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 
-# 1) Copiamos las dependencias ya instaladas
-COPY --from=builder /usr/local /usr/local
+# 1) Copiamos SOLO el venv (dependencias ya instaladas)
+COPY --from=builder /opt/venv /opt/venv
 
-# 2) Copiamos TODO el proyecto (incluye app.py sí o sí)
+# 2) Copiamos el código de la app
 COPY --from=builder /app /app
+
+# 3) Hacemos que use siempre ese venv
+ENV PATH="/opt/venv/bin:$PATH"
 
 EXPOSE 1000
 
